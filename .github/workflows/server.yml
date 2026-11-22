@@ -55,7 +55,7 @@ jobs:
         with:
           name: server-site
           path: ${{ runner.temp }}
-      - name: Deploy and check the public site
+      - name: Deploy and check the site on the server
         env:
           BLOG_DEPLOY_KEY: ${{ secrets.BLOG_DEPLOY_KEY }}
           BLOG_SSH_KNOWN_HOSTS: ${{ vars.BLOG_SSH_KNOWN_HOSTS }}
@@ -73,7 +73,3 @@ jobs:
             -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$ssh_dir/known_hosts" \
             -o ConnectTimeout=15 blog-deploy@38.76.215.165 "deploy $release" \
             < "$RUNNER_TEMP/blog-dist.tar.gz"
-          for path in / /archive/ /pagefind/pagefind.js; do
-            curl --fail --silent --show-error --max-time 15 --output /dev/null \
-              "https://px-poxiao.cn:3500$path"
-          done
