@@ -28,6 +28,9 @@ jobs:
         run: |
           test -s dist/index.html
           test -s dist/archive/index.html
+          if find dist/posts -name index.html -print -quit 2>/dev/null | grep -q .; then
+            grep -q 'href="/blog/posts/' dist/archive/index.html
+          fi
           test -s dist/pagefind/pagefind.js
           grep -q '/blog/_astro/' dist/index.html
       - uses: actions/upload-pages-artifact@v3

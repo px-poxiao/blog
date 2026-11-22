@@ -6,21 +6,15 @@ import { i18n } from "../i18n/translation";
 import type { PostForList } from "../utils/content-utils";
 import { getPostUrlBySlug } from "../utils/url-utils";
 
-let tags: string[];
-let categories: string[];
 export let sortedPosts: PostForList[] = [];
-
-const params = new URLSearchParams(window.location.search);
-tags = params.has("tag") ? params.getAll("tag") : [];
-categories = params.has("category") ? params.getAll("category") : [];
-const uncategorized = params.get("uncategorized");
 
 interface Group {
 	year: number;
 	posts: PostForList[];
 }
 
-let groups: Group[] = [];
+let query = "";
+$: groups = groupPosts(sortedPosts, query);
 
 function formatDate(date: Date) {
 	const month = (date.getMonth() + 1).toString().padStart(2, "0");
@@ -32,8 +26,16 @@ function formatTag(tagList: string[]) {
 	return tagList.map((t) => `#${t}`).join(" ");
 }
 
-onMount(async () => {
-	let filteredPosts: PostForList[] = sortedPosts;
+onMount(() => {
+	query = window.location.search;
+});
+
+function groupPosts(posts: PostForList[], search: string): Group[] {
+	const params = new URLSearchParams(search);
+	const tags = params.getAll("tag");
+	const categories = params.getAll("category");
+	const uncategorized = params.get("uncategorized");
+	let filteredPosts = posts;
 
 	if (tags.length > 0) {
 		filteredPosts = filteredPosts.filter(
@@ -72,8 +74,8 @@ onMount(async () => {
 
 	groupedPostsArray.sort((a, b) => b.year - a.year);
 
-	groups = groupedPostsArray;
-});
+	return groupedPostsArray;
+}
 </script>
 
 <div class="card-base px-8 py-6">
