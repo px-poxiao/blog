@@ -1,0 +1,79 @@
+name: Deploy blog to server
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: blog-production
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+        env:
+          ASTRO_SITE: https://px-poxiao.cn:3500
+          ASTRO_BASE: /
+      - name: Check and package the site
+        run: |
+          test -s dist/index.html
+          test -s dist/archive/index.html
+          test -s dist/pagefind/pagefind.js
+          grep -q '/_astro/' dist/index.html
+          if grep -q '/blog/_astro/' dist/index.html; then
+            echo 'Build contains GitHub Pages asset paths' >&2
+            exit 1
+          fi
+          tar -czf "$RUNNER_TEMP/blog-dist.tar.gz" -C dist .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: server-site
+          path: ${{ runner.temp }}/blog-dist.tar.gz
+          if-no-files-found: error
+          retention-days: 3
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: server-site
+          path: ${{ runner.temp }}
+      - name: Deploy and check the public site
+        env:
+          BLOG_DEPLOY_KEY: ${{ secrets.BLOG_DEPLOY_KEY }}
+          BLOG_SSH_KNOWN_HOSTS: ${{ vars.BLOG_SSH_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          : "${BLOG_DEPLOY_KEY:?Missing blog deployment key}"
+          : "${BLOG_SSH_KNOWN_HOSTS:?Missing pinned SSH host key}"
+          umask 077
+          ssh_dir=$(mktemp -d)
+          trap 'rm -rf -- "$ssh_dir"' EXIT
+          printf '%s\n' "$BLOG_DEPLOY_KEY" | tr -d '\r' > "$ssh_dir/key"
+          printf '%s\n' "$BLOG_SSH_KNOWN_HOSTS" > "$ssh_dir/known_hosts"
+          release="$GITHUB_RUN_NUMBER-$GITHUB_RUN_ATTEMPT-$GITHUB_SHA"
+          ssh -T -i "$ssh_dir/key" -o IdentitiesOnly=yes -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$ssh_dir/known_hosts" \
+            -o ConnectTimeout=15 blog-deploy@38.76.215.165 "deploy $release" \
+            < "$RUNNER_TEMP/blog-dist.tar.gz"
+          for path in / /archive/ /pagefind/pagefind.js; do
+            curl --fail --silent --show-error --max-time 15 --output /dev/null \
+              "https://px-poxiao.cn:3500$path"
+          done
