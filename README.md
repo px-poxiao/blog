@@ -1,3 +1,10 @@
+泥嚎！这里是破晓 blog 的原始仓库。
+
+这个仓库基于 Fuwari 模板搭建而成，下面是这个模板的 readme，懒得改了。
+
+---
+
+
 # 🍥Fuwari  
 ![Node.js >= 20](https://img.shields.io/badge/node.js-%3E%3D20-brightgreen) 
 ![pnpm >= 9](https://img.shields.io/badge/pnpm-%3E%3D9-blue) 
