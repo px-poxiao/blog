@@ -26,7 +26,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
         env:
-          ASTRO_SITE: https://px-poxiao.cn:3500
+          ASTRO_SITE: https://blog.px-poxiao.cn
           ASTRO_BASE: /
       - name: Check and package the site
         run: |
