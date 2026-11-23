@@ -1,5 +1,5 @@
 ---
-title: [搬运] 他人看法
+title: '[搬运] 他人看法'
 published: 2026-11-24
 description: '他人关于 11·21 洛谷档案馆事件的看法'
 image: ''
