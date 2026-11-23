@@ -45,7 +45,18 @@ export const profileConfig: ProfileConfig = {
 	avatar: "assets/images/avatar.png", // Relative to the /src directory. Relative to the /public directory if it starts with '/'
 	name: "poxiao",
 	bio: "一些碎碎念.",
-	links: [],
+	links: [
+		{
+			name: "GitHub",
+			icon: "fa6-brands:github",
+			url: "https://github.com/px-poxiao",
+		},
+		{
+			name: "QQ",
+			icon: "fa6-brands:qq",
+			url: "https://qm.qq.com/q/fGEHGthK",
+		},
+	],
 };
 
 export const licenseConfig: LicenseConfig = {
