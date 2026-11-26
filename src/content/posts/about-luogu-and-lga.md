@@ -1,4 +1,5 @@
 ---
+commentId: about-luogu-and-lga
 title: 关于洛谷，档案馆，和我
 published: 2026-11-23
 description: '11.21 档案馆事件，我预期的未来，和我的感受'

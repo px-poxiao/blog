@@ -1,0 +1,62 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Props {
+	commentId: string;
+}
+
+const productionOrigin = "https://blog.px-poxiao.cn";
+const production = Astro.site?.origin === productionOrigin && import.meta.env.BASE_URL === "/";
+const localPreview = process.env.WALINE_PREVIEW === "1";
+const { commentId } = Astro.props;
+---
+
+{(production || localPreview) && (
+	<blog-comments
+		id="comments"
+		class="card-base block mb-4 px-6 md:px-9 pt-6 pb-4"
+		data-comment-path={`/posts/${commentId}`}
+		data-allowed-origin={production ? productionOrigin : "local"}
+		data-pagefind-ignore
+		aria-labelledby="comments-title"
+		hidden
+	>
+		<h2 id="comments-title" class="flex items-center gap-2 text-xl font-bold text-black/90 dark:text-white/90">
+			<Icon name="material-symbols:chat-bubble-outline" class="text-[var(--primary)]" />
+			留言区
+		</h2>
+		<p class="mt-1 mb-4 text-sm text-black/60 dark:text-white/60">
+			不用登录，昵称选填。留言提交后公开显示，请勿填写个人敏感信息。
+		</p>
+		<p data-comments-status role="status" class="text-sm text-black/60 dark:text-white/60">正在加载留言区…</p>
+		<button type="button" data-comments-retry class="hidden btn-regular rounded-md px-3 py-1.5 mt-2 text-sm">
+			重试
+		</button>
+		<div data-comments-mount></div>
+	</blog-comments>
+)}
+
+<style is:global>
+	blog-comments[hidden] {
+		display: none;
+	}
+	blog-comments [data-comments-mount] {
+		--waline-font-size: 0.9375rem;
+		--waline-theme-color: oklch(50% 0.15 var(--hue));
+		--waline-active-color: oklch(43% 0.15 var(--hue));
+		--waline-box-shadow: none;
+		--waline-border-color: var(--line-divider);
+		--waline-avatar-size: 2.45rem;
+	}
+	html.dark blog-comments [data-comments-mount] {
+		--waline-theme-color: var(--primary);
+		--waline-active-color: var(--primary);
+	}
+	blog-comments .wl-panel {
+		margin-inline: 0;
+	}
+	blog-comments .wl-like,
+	blog-comments .wl-sort li:last-child {
+		display: none;
+	}
+</style>

@@ -1,4 +1,5 @@
 ---
+commentId: shuigu-discuss
 title: '[搬运] 水谷帖子'
 published: 2026-11-25
 description: '水谷社区对于洛谷行为的看法'

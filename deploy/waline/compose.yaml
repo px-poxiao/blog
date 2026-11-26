@@ -1,0 +1,25 @@
+services:
+  waline:
+    image: lizheming/waline:1.43.8@sha256:3c8a5775d25ef9a8867b2ec67f6c5f00dee9b5ea0785bb2ae78b8a4672b78ca0
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8360:8360"
+    volumes:
+      - ./data:/app/data
+    environment:
+      TZ: Asia/Shanghai
+      SQLITE_PATH: /app/data
+      JWT_TOKEN: "${JWT_TOKEN:?请先运行 ./init.sh 初始化本机密钥}"
+      SITE_NAME: "poxiao's blog"
+      SITE_URL: https://blog.px-poxiao.cn
+      SECURE_DOMAINS: blog.px-poxiao.cn
+      COMMENT_AUDIT: "false"
+      # Waline 1.43.8 fetches an OAuth provider list even with guest-only comments.
+      OAUTH_URL: "data:application/json,%7B%22services%22%3A%5B%5D%7D"
+      AKISMET_KEY: "false"
+      IPQPS: "20"
+      DISABLE_USERAGENT: "true"
+      DISABLE_REGION: "true"
+      DISABLE_AUTHOR_NOTIFY: "true"
+      AVATAR_PROXY: "false"
+      GRAVATAR_STR: https://blog.px-poxiao.cn/waline-avatar.svg
