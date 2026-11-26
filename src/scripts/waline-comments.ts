@@ -38,7 +38,7 @@ class BlogComments extends HTMLElement {
 		const generation = ++this.generation;
 		status.hidden = false;
 		status.textContent = "正在加载留言区…";
-		retry.classList.add("hidden");
+		retry.hidden = true;
 
 		try {
 			const [{ init }] = await Promise.all([
@@ -61,14 +61,14 @@ class BlogComments extends HTMLElement {
 				search: false,
 				texRenderer: false,
 				noRss: true,
-				wordLimit: [1, 1500],
+				wordLimit: [0, 1500],
 				locale: { nick: "昵称（选填）", placeholder: "说点什么吧…" },
 			});
 			status.hidden = true;
 		} catch {
 			if (!this.isConnected || generation !== this.generation) return;
 			status.textContent = "留言区暂时加载不了。";
-			retry.classList.remove("hidden");
+			retry.hidden = false;
 		}
 	}
 }
