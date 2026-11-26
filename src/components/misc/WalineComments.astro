@@ -26,19 +26,18 @@ const { commentId } = Astro.props;
 			<Icon name="material-symbols:chat-bubble-outline" class="text-[var(--primary)]" />
 			留言区
 		</h2>
-		<p class="mt-1 mb-4 text-sm text-black/60 dark:text-white/60">
-			不用登录，昵称选填。留言提交后公开显示，请勿填写个人敏感信息。
-		</p>
-		<p data-comments-status role="status" class="text-sm text-black/60 dark:text-white/60">正在加载留言区…</p>
-		<button type="button" data-comments-retry class="hidden btn-regular rounded-md px-3 py-1.5 mt-2 text-sm">
+		<p data-comments-status role="status" class="mt-3 text-sm text-black/60 dark:text-white/60">正在加载留言区…</p>
+		<button type="button" data-comments-retry hidden class="btn-regular rounded-md px-3 py-1.5 mt-2 text-sm">
 			重试
 		</button>
-		<div data-comments-mount></div>
+		<div data-comments-mount class="mt-5"></div>
 	</blog-comments>
 )}
 
 <style is:global>
-	blog-comments[hidden] {
+	blog-comments[hidden],
+	blog-comments [data-comments-retry][hidden],
+	blog-comments [data-comments-status][hidden] {
 		display: none;
 	}
 	blog-comments [data-comments-mount] {
@@ -48,16 +47,80 @@ const { commentId } = Astro.props;
 		--waline-box-shadow: none;
 		--waline-border-color: var(--line-divider);
 		--waline-avatar-size: 2.45rem;
+		--waline-info-color: #626c7d;
+		--waline-bg-color: color-mix(in oklab, var(--card-bg) 80%, var(--page-bg));
 	}
 	html.dark blog-comments [data-comments-mount] {
 		--waline-theme-color: var(--primary);
 		--waline-active-color: var(--primary);
+		--waline-color: #e2e8f0;
+		--waline-dark-grey: #cbd5e1;
+		--waline-info-color: #aab7c7;
+		--waline-light-grey: #aab7c7;
+		--waline-bg-color-light: var(--btn-regular-bg);
 	}
-	blog-comments .wl-panel {
+	blog-comments [data-comments-mount] .wl-panel {
 		margin-inline: 0;
 	}
-	blog-comments .wl-like,
-	blog-comments .wl-sort li:last-child {
+	blog-comments [data-comments-mount] .wl-count {
+		color: var(--waline-color);
+	}
+	blog-comments [data-comments-mount] .wl-sort li:last-child,
+	blog-comments [data-comments-mount] .wl-actions > a[title="Markdown Guide"],
+	blog-comments [data-comments-mount] .wl-panel:has(.wl-editor:placeholder-shown) .wl-text-number {
 		display: none;
+	}
+	blog-comments [data-comments-mount] .wl-footer {
+		align-items: center;
+		gap: 0.625rem;
+	}
+	blog-comments [data-comments-mount] .wl-comment-actions {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.75rem;
+		margin-inline-start: 0.75rem;
+	}
+	blog-comments [data-comments-mount] .wl-comment-actions .wl-like,
+	blog-comments [data-comments-mount] .wl-comment-actions .wl-reply,
+	blog-comments [data-comments-mount] .wl-actions > button:last-child {
+		width: auto;
+		min-width: 2.25rem;
+		min-height: 2rem;
+		height: auto;
+		margin: 0;
+		padding: 0.25rem 0.625rem;
+		border-radius: 0.45rem;
+		background: transparent;
+		color: var(--waline-info-color);
+		font-size: 0.8125rem;
+		line-height: 1.4;
+		white-space: nowrap;
+	}
+	blog-comments [data-comments-mount] .wl-comment-actions .wl-like {
+		gap: 0.375rem;
+	}
+	blog-comments [data-comments-mount] .wl-comment-actions .wl-like.active,
+	blog-comments [data-comments-mount] .wl-comment-actions .wl-reply.active,
+	blog-comments [data-comments-mount] .wl-actions > button:last-child.active {
+		color: var(--waline-theme-color);
+	}
+	blog-comments [data-comments-mount] .wl-comment-actions button:hover,
+	blog-comments [data-comments-mount] .wl-actions > button:last-child:hover {
+		background: var(--btn-regular-bg-hover);
+		color: var(--waline-theme-color);
+	}
+	blog-comments [data-comments-mount] .wl-comment-actions button > svg {
+		flex-shrink: 0;
+		width: 1.125rem;
+		height: 1.125rem;
+	}
+	blog-comments [data-comments-mount] .wl-actions > button:last-child > svg {
+		display: none;
+	}
+	blog-comments [data-comments-mount] .wl-actions > button:last-child::after {
+		content: attr(title);
+	}
+	blog-comments [data-comments-mount] .wl-footer button.primary {
+		min-height: 2rem;
 	}
 </style>
