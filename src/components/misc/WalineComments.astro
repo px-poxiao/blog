@@ -6,7 +6,8 @@ interface Props {
 }
 
 const productionOrigin = "https://blog.px-poxiao.cn";
-const production = Astro.site?.origin === productionOrigin && import.meta.env.BASE_URL === "/";
+const production =
+	Astro.site?.origin === productionOrigin && import.meta.env.BASE_URL === "/";
 const localPreview = process.env.WALINE_PREVIEW === "1";
 const { commentId } = Astro.props;
 ---
